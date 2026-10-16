@@ -6,5 +6,8 @@
   "author": { "name": "Clayzo", "url": "https://clayzo.com" },
   "homepage": "https://clayzo.com",
   "repository": "https://github.com/Clayzo/claude-plugin",
-  "license": "LicenseRef-Clayzo-SDK-License"
+  "license": "LicenseRef-Clayzo-SDK-License",
+  "documentationUrl": "https://docs.clayzo.com/authoring/agents",
+  "privacyPolicyUrl": "https://clayzo.com/privacy",
+  "termsOfServiceUrl": "https://clayzo.com/terms"
 }
