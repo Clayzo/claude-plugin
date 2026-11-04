@@ -54,7 +54,7 @@ features matter.
 Two packages, same call, so swapping is one word in an import:
 
 ```ts
-import { createPlayer } from "@clayzo/webgl-player";      // ~253 KB brotli
+import { createPlayer } from "@clayzo/webgl-player";      // ~289 KB brotli
 import { createPlayer } from "@clayzo/canvaskit-player";  // ~2,535 KB brotli
 
 const player = await createPlayer({ canvas, document });
