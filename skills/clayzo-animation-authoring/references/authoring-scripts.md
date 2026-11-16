@@ -247,6 +247,73 @@ const shot = video("shot-a", { asset: clip, inTick: 0, outTick: 960,
 - Mask footage with a `matte`. Titles, glass and shaders go over it as later
   nodes.
 
+## Generated images
+
+`clayzo image generate` makes a picture from a prompt. Use it when the person
+asks for one, or when the piece needs something shapes draw poorly that is not
+the customer's identity: atmosphere, scenery, a texture, a material, a generic
+object. Most pieces need no image, and the art direction is the same either
+way.
+
+Never generate the customer's own named product, logo or people unless they
+ask: the result is an invented one shown as theirs. Draw it from geometry, or
+ask for their picture and use that, as the image or as a `--ref`.
+
+```sh
+clayzo image generate "a glass marble on a plain white ground, studio light, full bleed, no border or frame" --out art/marble.png
+```
+
+Ask for a full-bleed picture with no border, frame or text; photographic
+styles such as film grain can come back with a border drawn in.
+
+| Flag | Values |
+|---|---|
+| `--quality` | `draft` (fastest, 1K only), `standard` (default), `pro` (best) |
+| `--size` | `1K`, `2K`, `4K`: about 1, 4 or 16 megapixels |
+| `--aspect` | `1:1` (default), `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` |
+| `--ref <image>` | a PNG, JPEG or WebP to edit, restyle or match; repeat for up to 3, 3 MB in total |
+| `--force` | replace an existing file |
+
+- It prints one JSON line: `{ file, width, height, mime, bytes, quality, size,
+  aspect, credits, balance, id }`. Read `file`, `width`, `height` and `mime`
+  from it: a draft comes back as a JPEG, so `--out x.png` can be saved as
+  `x.jpg`.
+- Images cost the person credits, at $0.01 a credit: draft 6; standard 7, 9 or
+  19 at 1K, 2K or 4K; pro 25, 25 or 40. Everything else in Clayzo is free.
+  `clayzo credits` shows the balance.
+- Quality is speed against finish. A draft is a usable result: regenerate at a
+  higher quality only if the picture falls short in the frame.
+- It needs `clayzo login` or a CI token in `CLAYZO_TOKEN`. A render pass cannot
+  spend credits.
+- Errors are JSON on stderr, and a failed or refused image costs nothing. Exit
+  code 3 with `CLAYZO_CREDITS_REQUIRED` means the workspace is out of credits:
+  stop, and give the person its `needed`, `balance` and `topUpUrl`.
+  `CLAYZO_IMAGE_BLOCKED` means the prompt was refused: rephrase it.
+- `clayzo image download <id> --out <file>` fetches a finished image again for
+  a day, at no cost.
+- Images are opaque: there is no transparency. Ask for a plain ground in the
+  field's colour, or cut the subject out with a clip or a `matte`. For a
+  subject on a white ground over a coloured field, `duotone` it to black and
+  white and set the effect node's `blendMode: "multiply"`: the white takes the
+  field's colour and only the dark prints, so keep anything dark out from
+  behind it.
+
+In the document it is an `image` asset and an `image` node:
+
+```ts
+assets: { marble: { id: "marble", type: "image", uri: "art/marble.png",
+                    width: 1024, height: 1024, mimeType: "image/png" } },
+// in composition.nodes, and listed in rootNodeIds:
+marble: { ...base("marble", { outTick: DURATION, x: 540, y: 540 }), type: "image", assetId: "marble",
+          size: constant({ width: 720, height: 720 }), fit: "cover" },
+```
+
+`fit` is `fill`, `contain`, `cover` or `none`. An image moves, clips, mattes
+and parallaxes like any node, and an effect or custom shader takes it as its
+input: duotone, dither, glass, refraction or displacement over a generated
+picture is where it stops looking like a stock image and becomes part of the
+piece.
+
 ## Interactivity
 
 `withInteraction(scene, contributions)` layers pointer behaviour onto a
