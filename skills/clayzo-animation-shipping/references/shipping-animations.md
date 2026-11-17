@@ -49,22 +49,6 @@ effects, 2.5D projection, and interaction bindings do not survive conversion
 to simpler interchange formats; prefer `.clayzo` or rendered media when those
 features matter.
 
-## Editor final exports on AWS
-
-In a clayzo-sleevy source checkout, when AWS credentials are available, use
-`bash scripts/gpu-export/export.sh reviewed.clayzo final.mp4` for final video
-exports. It uses a baked GPU AMI in us-east-2, retries spot capacity or SSH loss,
-verifies downloaded frame counts, and tears down temporary instances and access
-resources. See `scripts/gpu-export/README.md` for IAM, quotas, AMI baking, costs
-and the orphan sweep (`bash scripts/gpu-export/cleanup.sh 30`). Never report
-success before the runner's verification succeeds; preserve its JSON and logs.
-
-When AWS credentials or the GPU runner are unavailable, export locally with
-`clayzo export reviewed.clayzo final.mp4 --format mp4 --tier final --supersample 2 --full-resolution --backend cpu`.
-Both paths keep the same final quality, supersampling and full resolution.
-If AWS fails, retain its error and explain any local CPU fallback; never lower
-quality to make an export cheaper or faster.
-
 ## Which player
 
 Two packages, same call, so swapping is one word in an import:
